@@ -43,6 +43,8 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             _lastMmPos = mmPos;
             _lastTime = currentTime;
         }
+        
+        Emit?.Invoke(value);
     }
 
     public PipelinePosition Position => PipelinePosition.PreTransform;
