@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace HandSpeed;
+﻿namespace HandSpeed;
 
 internal struct Unit
 {
@@ -19,14 +17,16 @@ internal struct Unit
 public static class UnitConversion
 {
 
-    private static readonly List<Unit> UnitList = new List<Unit>
+    public static string SpeedFormatting;
+    public static string DistanceFormatting;
+    private static readonly List<Unit> UnitList = new()
     {
-        new Unit(1f, 9f, "mm"),
-        new Unit(10f, 999f, "cm"),
-        new Unit(1000f, 999999f, "m"),
-        new Unit(1000000f, float.MaxValue, "km")
+        new(1f, 9f, "mm"),
+        new(10f, 999f, "cm"),
+        new(1000f, 999999f, "m"),
+        new(1000000f, float.MaxValue, "km")
     };
-    
+
     private static (float length, string suffix) ConvertToClosestDistanceUnit(float length)
     {
         var outputLength = length;
@@ -40,11 +40,10 @@ public static class UnitConversion
 
         return (length: outputLength, suffix: outputSuffix);
     }
-    
-    public static void WriteUnitToFile(string fileName, string format, float distance)
+
+    public static string FormatString(string format, float value)
     {
-        var humanReadable = UnitConversion.ConvertToClosestDistanceUnit(distance);
-        var formattedString = string.Format(format, humanReadable.length, humanReadable.suffix);
-        File.WriteAllText(fileName, formattedString);
+        var humanReadable = ConvertToClosestDistanceUnit(value);
+        return string.Format(format, humanReadable.length, humanReadable.suffix);
     }
 }
