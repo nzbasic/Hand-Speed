@@ -16,6 +16,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     private Vector2 _mmScale = Vector2.Zero;
     private long _tick;
     private float _totalDistance;
+    private float _cumDistance;
 
     [Property("Speed Formatting")]
     [DefaultPropertyValue("{0:N1}{1}/s")]
@@ -104,6 +105,11 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     [ToolTip("(Optional) Provide styling for the speed span in inline format (e.g. display: none;)")]
     public string CustomSpeedStyle { get; set; }
     
+    [Property("Save Global Distance")]
+    [DefaultPropertyValue(true)]
+    [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
+    public bool SaveGlobalDistance { get; set; }
+    
     [TabletReference]
     public TabletReference TabletReference
     {
@@ -140,18 +146,56 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             var timeDifference = currentTime - _lastTime;
             var speed = dist / timeDifference;
             _totalDistance += dist;
+            _cumDistance += dist;
 
             _speedPoints.Add(new SpeedPoint(speed, currentTime));
             var averageSpeed = _speedPoints.CalculateAverageSpeed(RollingWindow) * 1000;
 
             var distFormatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, _totalDistance);
             var speedFormatted = UnitConversion.FormatString(UnitConversion.SpeedFormatting, averageSpeed);
-            WebOverlay.UpdateData(new StatsDto(distFormatted, speedFormatted));
+            WebOverlay.UpdateData(new StatsDto(distFormatted, speedFormatted, false));
+
+            if (SaveGlobalDistance && timeDifference >= 1e3)
+            {
+                try
+                {
+                    var rawDistanceString = System.IO.File.ReadAllText("global_distance_raw.txt");
+                    var success = int.TryParse(rawDistanceString, out var rawDistance);
+
+                    if (!success)
+                    {
+                        Log.Debug("Hand Speed", "Failed to convert int from global_distance_raw");
+                    }
+                    else
+                    {
+                        rawDistance += (int)_cumDistance;
+                        _cumDistance = 0;
+                        var formatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, rawDistance);
+                        System.IO.File.WriteAllText("global_distance_raw.txt", rawDistance.ToString());
+                        System.IO.File.WriteAllText("global_distance_formatted.txt", formatted);
+                    }
+                }
+                catch (FileNotFoundException e)
+                {
+                    try
+                    {
+                        System.IO.File.WriteAllText("global_distance_raw.txt", "0");
+                    }
+                    catch (Exception inner)
+                    {
+                        Log.Debug("Hand Speed", inner.Message);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Log.Debug("Hand Speed", e.Message);
+                }
+            }
 
             _lastMmPos = mmPos;
             _lastTime = currentTime;
         }
-
+        
         Emit?.Invoke(value);
     }
 
