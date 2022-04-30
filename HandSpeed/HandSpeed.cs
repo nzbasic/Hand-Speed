@@ -61,6 +61,10 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     [DefaultPropertyValue("#fff")]
     public string TextColor { get; set; }
 
+    [Property("Web Outline")]
+    [DefaultPropertyValue("1px solid #414141; outline-offset: -1px")]
+    public string Outline { get; set; }
+    
     [Property("Web Rounding")]
     [DefaultPropertyValue("0.25rem")]
     public string BorderRounding { get; set; }
@@ -124,7 +128,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
 
             Log.Debug("Hand Speed", "Initialized");
 
-            var style = new Style(BackgroundColor, TextColor, BorderRounding, FontFamily, FontWeight, FontSize, Width,
+            var style = new Style(BackgroundColor, TextColor, Outline, BorderRounding, FontFamily, FontWeight, FontSize, Width,
                 Title, CustomTitleStyle, CustomDivStyle, CustomDistanceStyle, CustomSpeedStyle);
             WebOverlay.Up(ServerUri, style, ClearInterval);
         }

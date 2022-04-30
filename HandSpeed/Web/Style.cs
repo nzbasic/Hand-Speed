@@ -2,12 +2,13 @@
 
 public class Style
 {
-    public Style(string bgColor, string textColor, string rounding, string fontFamily, string fontWeight,
+    public Style(string bgColor, string textColor, string outline, string rounding, string fontFamily, string fontWeight,
         string fontSize, string width, string title, string titleStyle, string divStyle, string distanceStyle,
         string speedStyle)
     {
         BgColor = bgColor;
         TextColor = textColor;
+        Outline = outline;
         Rounding = rounding;
         FontFamily = fontFamily;
         FontWeight = fontWeight;
@@ -22,6 +23,7 @@ public class Style
 
     public string BgColor { get; }
     public string TextColor { get; }
+    public string Outline { get; }
     public string Rounding { get; }
     public string FontFamily { get; }
     public string FontWeight { get; }
