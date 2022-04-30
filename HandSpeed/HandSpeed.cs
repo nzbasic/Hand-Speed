@@ -54,7 +54,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     public string ServerUri { get; set; }
 
     [Property("Web Bg Color")]
-    [DefaultPropertyValue("#192227")]
+    [DefaultPropertyValue("#1C1B22")]
     public string BackgroundColor { get; set; }
 
     [Property("Web Text Color")]
@@ -66,7 +66,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     public string Outline { get; set; }
     
     [Property("Web Rounding")]
-    [DefaultPropertyValue("0.25rem")]
+    [DefaultPropertyValue("0.75rem")]
     public string BorderRounding { get; set; }
 
     [Property("Web Font Family")]
@@ -78,7 +78,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     public string FontWeight { get; set; }
 
     [Property("Web Font Size")]
-    [DefaultPropertyValue("2rem")]
+    [DefaultPropertyValue("3rem")]
     public string FontSize { get; set; }
 
     [Property("Web Title")]
@@ -86,7 +86,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     public string Title { get; set; }
 
     [Property("Web Width")]
-    [DefaultPropertyValue("12rem")]
+    [DefaultPropertyValue("20rem")]
     public string Width { get; set; }
 
     [Property("Div Style")]
