@@ -7,16 +7,24 @@ namespace HandSpeed.Web;
 
 public static class WebOverlay
 {
-    public const string Protocol = "http://";
-    public const string WsRoute = "/data";
+    private const string Protocol = "http://";
+    private const string WsRoute = "/data";
+    private static Style _style;
 
     private static WebServer? _server;
     private static WebSocketsDataModule? _socket;
 
-    public static void Up(string uri, Style? style, int clearInterval)
+    public static void Up(string uri, Style style, int clearInterval)
     {
+        _style = style;
+        if (_server != null)
+        {
+            UpdateData(new StatsDto("", "", true));
+            return;
+        }
+        
         Log.Debug("Hand Speed", "Starting web overlay at " + uri);
-
+        
         try
         {
             _socket = new WebSocketsDataModule(WsRoute);
@@ -25,12 +33,7 @@ public static class WebOverlay
                     .WithMode(HttpListenerMode.EmbedIO))
                 .WithCors()
                 .WithModule(_socket)
-                .WithWebApi("/", m => m.RegisterController(() =>
-                {
-                    var api = new StaticController();
-                    api.Initialize(uri, WsRoute, style, clearInterval);
-                    return api;
-                }));
+                .WithWebApi("/", m => m.RegisterController(() => new StaticController(uri, WsRoute, _style, clearInterval)));
             _server.RunAsync();
 
             var browser = new Process

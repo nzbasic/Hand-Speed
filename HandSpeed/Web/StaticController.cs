@@ -6,12 +6,12 @@ namespace HandSpeed.Web;
 
 public class StaticController : WebApiController
 {
-    private Style? _style;
-    private string? _uri;
-    private string? _wsRoute;
-    private int _clearInterval;
+    private readonly Style _style;
+    private readonly string? _uri;
+    private readonly string? _wsRoute;
+    private readonly int _clearInterval;
 
-    public void Initialize(string uri, string wsRoute, Style? style, int clearInterval)
+    public StaticController(string uri, string wsRoute, Style style, int clearInterval)
     {
         _uri = uri;
         _wsRoute = wsRoute;

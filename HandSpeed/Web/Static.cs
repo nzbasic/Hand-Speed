@@ -4,7 +4,7 @@
 // edit: its actually ok now because it acts as SSR for user styles 
 public static class Static
 {
-    public static string Html(string url, Style? style, int clearInterval)
+    public static string Html(string url, Style style, int clearInterval)
     {
         return $@"
             <!DOCTYPE html>
@@ -29,12 +29,18 @@ public static class Static
                         connection.onmessage = (event) => {{
                             if (timeout) clearTimeout(timeout);
                             const json = JSON.parse(event.data);
-                            document.getElementById('distance').textContent = json.distance
-                            document.getElementById('speed').textContent = json.speed
+                            
+                            if (json.refresh) {{
+                                window.location.reload();
+                                return;
+                            }}
+
+                            document.getElementById('distance').textContent = json.distance;
+                            document.getElementById('speed').textContent = json.speed;
                             if ({clearInterval}) {{
                                 timeout = setTimeout(() => {{
-                                    document.getElementById('speed').textContent = ""{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f)}""
-                                }}, {clearInterval})
+                                    document.getElementById('speed').textContent = ""{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f)}"";
+                                }}, {clearInterval});
                             }}
                         }}
                     </script>
