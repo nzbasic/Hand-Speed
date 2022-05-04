@@ -10,7 +10,7 @@ All of the web CSS is customizable, and it will hot reload whenever you save/app
 
 ## Installation
 
-Download the .zip file in releases and drag it into the plugin manager window in OTD (plugins -> open plugin manager).
+[Download the .zip file in releases](https://github.com/nzbasic/Hand-Speed/releases/latest) and drag it into the plugin manager window in OTD (plugins -> open plugin manager).
 
 ## Demo
 
