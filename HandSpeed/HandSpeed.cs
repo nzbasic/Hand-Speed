@@ -143,7 +143,11 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
 
     public void Consume(IDeviceReport value)
     {
-        if (value is not IAbsolutePositionReport abs) return;
+        if (value is not IAbsolutePositionReport abs)
+        {
+            Emit?.Invoke(value);
+            return;
+        }
         _tick++;
 
         if (_tick % RateLimit == 0)
