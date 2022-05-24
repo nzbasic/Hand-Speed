@@ -164,7 +164,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             _speedPoints.Add(new SpeedPoint(speed, currentTime));
             var averageSpeed = _speedPoints.CalculateAverageSpeed(RollingWindow) * 1000;
 
-            var distFormatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, _totalDistance, false);
+            var distFormatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, _totalDistance, true);
             var speedFormatted = UnitConversion.FormatString(UnitConversion.SpeedFormatting, averageSpeed, ShowMetres);
             WebOverlay.UpdateData(new StatsDto(distFormatted, speedFormatted, false));
 
