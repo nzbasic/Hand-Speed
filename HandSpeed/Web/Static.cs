@@ -39,7 +39,7 @@ public static class Static
                             document.getElementById('speed').textContent = json.speed;
                             if ({clearInterval}) {{
                                 timeout = setTimeout(() => {{
-                                    document.getElementById('speed').textContent = ""{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f)}"";
+                                    document.getElementById('speed').textContent = ""{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f, false)}"";
                                 }}, {clearInterval});
                             }}
                         }}

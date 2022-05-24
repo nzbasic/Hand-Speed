@@ -27,7 +27,7 @@ public static class UnitConversion
         new(1000000f, float.MaxValue, "km")
     };
 
-    private static (float length, string suffix) ConvertToClosestDistanceUnit(float length)
+    private static (float length, string suffix) ConvertToClosestDistanceUnit(float length, bool showMetres)
     {
         var outputLength = length;
         var outputSuffix = "mm";
@@ -38,12 +38,13 @@ public static class UnitConversion
             outputLength = length / unit.Min;
         }
 
-        return (length: outputLength, suffix: outputSuffix);
+        if (showMetres || outputSuffix != "m") return (length: outputLength, suffix: outputSuffix);
+        return (length: outputLength * 100, suffix: "cm");
     }
 
-    public static string FormatString(string format, float value)
+    public static string FormatString(string format, float value, bool showMetres)
     {
-        var humanReadable = ConvertToClosestDistanceUnit(value);
+        var humanReadable = ConvertToClosestDistanceUnit(value, showMetres);
         return string.Format(format, humanReadable.length, humanReadable.suffix);
     }
 }

@@ -31,6 +31,11 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     {
         set => UnitConversion.DistanceFormatting = value;
     }
+    
+    [Property("Allow Metres in Speed")]
+    [DefaultPropertyValue(false)]
+    [ToolTip("If true, speeds above 100cm/s will be shown as 1m/s")]
+    public bool ShowMetres { get; set; }
 
     [Property("Speed Window Size")]
     [DefaultPropertyValue(1000)]
@@ -155,8 +160,8 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             _speedPoints.Add(new SpeedPoint(speed, currentTime));
             var averageSpeed = _speedPoints.CalculateAverageSpeed(RollingWindow) * 1000;
 
-            var distFormatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, _totalDistance);
-            var speedFormatted = UnitConversion.FormatString(UnitConversion.SpeedFormatting, averageSpeed);
+            var distFormatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, _totalDistance, false);
+            var speedFormatted = UnitConversion.FormatString(UnitConversion.SpeedFormatting, averageSpeed, ShowMetres);
             WebOverlay.UpdateData(new StatsDto(distFormatted, speedFormatted, false));
 
             if (SaveGlobalDistance && timeDifference >= 1e3)
@@ -174,7 +179,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
                     {
                         rawDistance += (int)_cumDistance;
                         _cumDistance = 0;
-                        var formatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, rawDistance);
+                        var formatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, rawDistance, false);
                         System.IO.File.WriteAllText("global_distance_raw.txt", rawDistance.ToString());
                         System.IO.File.WriteAllText("global_distance_formatted.txt", formatted);
                     }
