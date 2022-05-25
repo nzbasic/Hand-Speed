@@ -36,6 +36,11 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     [DefaultPropertyValue(false)]
     [ToolTip("If true, speeds above 100cm/s will be shown as 1m/s")]
     public bool ShowMetres { get; set; }
+    
+    [Property("Save Global Distance")]
+    [DefaultPropertyValue(true)]
+    [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
+    public bool SaveGlobalDistance { get; set; }
 
     [Property("Speed Window Size")]
     [DefaultPropertyValue(1000)]
@@ -113,12 +118,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     [DefaultPropertyValue("")]
     [ToolTip("(Optional) Provide styling for the speed span in inline format (e.g. display: none;)")]
     public string CustomSpeedStyle { get; set; }
-    
-    [Property("Save Global Distance")]
-    [DefaultPropertyValue(true)]
-    [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
-    public bool SaveGlobalDistance { get; set; }
-    
+
     [TabletReference]
     public TabletReference TabletReference
     {
