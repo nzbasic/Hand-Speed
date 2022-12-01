@@ -19,8 +19,8 @@ public static class Static
                 <body style=""margin: 0;display: inline-block; font-family: '{style.FontFamily}'; font-size: {style.FontSize}; font-weight: {style.FontWeight};"">
                     <div style=""background-color: {style.BgColor};color: {style.TextColor};border-radius: {style.Rounding};padding: 1rem;display: flex;flex-direction: column;justify-content: center;align-items: center;width: {style.Width}; outline: {style.Outline}; {style.DivStyle}"">
                         <span style=""margin-bottom: 0.5rem; {style.TitleStyle}"">{style.Title}</span>
-                        <span style=""{style.SpeedStyle}""id='speed'>0.0mm/s</span>
-                        <span style=""{style.DistanceStyle}""id='distance'>0.00mm</span>
+                        <span style=""{style.SpeedStyle}""id='speed'>{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f, false)}</span>
+                        <span style=""{style.DistanceStyle}""id='distance'>{UnitConversion.FormatString(UnitConversion.DistanceFormatting, 0f, true)}</span>
                     </div>
                     <script>
                         const connection = new WebSocket('ws://{url}', 'json')
@@ -39,7 +39,7 @@ public static class Static
                             document.getElementById('speed').textContent = json.speed;
                             if ({clearInterval}) {{
                                 timeout = setTimeout(() => {{
-                                    document.getElementById('speed').textContent = ""{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f, true)}"";
+                                    document.getElementById('speed').textContent = ""{UnitConversion.FormatString(UnitConversion.SpeedFormatting, 0f, false)}"";
                                 }}, {clearInterval});
                             }}
                         }}

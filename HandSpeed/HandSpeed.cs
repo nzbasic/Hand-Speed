@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Text.RegularExpressions;
 using HandSpeed.Web;
 using OpenTabletDriver.Plugin;
 using OpenTabletDriver.Plugin.Attributes;
@@ -19,10 +20,11 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     private float _cumDistance;
 
     [Property("Speed Formatting")]
-    [DefaultPropertyValue("{0:N1}{1}/s")]
+    [DefaultPropertyValue("{0:N1}{1}")]
     public string SpeedFormat
     {
-        set => UnitConversion.SpeedFormatting = value;
+        // Remove old /s for compatibility with new formatting
+        set => UnitConversion.SpeedFormatting = value.Replace("/s", "");
     }
 
     [Property("Distance Formatting")]
@@ -31,21 +33,58 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     {
         set => UnitConversion.DistanceFormatting = value;
     }
-    
-    [Property("Allow Metres in Speed")]
-    [DefaultPropertyValue(false)]
-    [ToolTip("If true, speeds above 100cm/s will be shown as 1m/s")]
-    public bool ShowMetres { get; set; }
+
+    [Property("Forced Distance Unit (e.g. km)")]
+    [DefaultPropertyValue("")]
+    [ToolTip("Possible values: mm, cm, m, km. Leave empty to use dynamic unit")]
+    public string ForcedDistanceUnit
+    {
+        set
+        {
+            var m = Regex.Match(value, @"(km|m|cm|mm)");
+            
+            if (m.Success)
+            {
+                UnitConversion.ParseForcedDistance(m.Groups[1].ToString());
+            }
+            else
+            {
+                UnitConversion.ResetForcedDistance();
+                Log.Debug("Hand Speed", value + " does not match required pattern (km|m|cm|mm), ignoring");
+            }
+        }
+    }
+
+    [Property("Forced Speed Unit (e.g. km/h, cm/s)")]
+    [DefaultPropertyValue("")]
+    [ToolTip("e.g. km/h or m/s Possible Distance values: mm, cm, m, km. Possible Time values: ms, s, min, h. Leave empty to use dynamic unit")]
+    public string ForcedSpeedUnit 
+    {
+        set
+        {
+            var m = Regex.Match(value, @"(km|m|cm|mm)\/(ms|s|min|h)");
+
+            if (m.Success)
+            {
+                UnitConversion.ParseForcedSpeed(m.Groups[1].ToString(), m.Groups[2].ToString());
+            }
+            else
+            {
+                UnitConversion.ResetForcedSpeed();
+                Log.Debug("Hand Speed", value + " does not match required pattern (km|m|cm|mm)/(ms|s|min|h), ignoring");
+            }
+        }
+    }
     
     [Property("Save Global Distance")]
     [DefaultPropertyValue(true)]
     [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
     public bool SaveGlobalDistance { get; set; }
 
-    [Property("Open Website Automaticly")]
-    [DefaultPropertyValue(false)]
+    [Property("Open Website Automatically")]
+    [DefaultPropertyValue(true)]
     [ToolTip("Open the Website when Hand Speed Viewer is initialized.")]
-    public bool OpenWebsiteAutomaticly { get; set; }
+    public bool OpenWebsiteAutomatically { get; set; }
 
     [Property("Speed Window Size")]
     [DefaultPropertyValue(1000)]
@@ -137,7 +176,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             };
 
             Log.Debug("Hand Speed", "Initialized");
-            if (OpenWebsiteAutomaticly)
+            if (OpenWebsiteAutomatically)
             {
                 Log.Debug("Hand Speed", "Opening Website");
                 var style = new Style(BackgroundColor, TextColor, Outline, BorderRounding, FontFamily, FontWeight, FontSize, Width,
@@ -173,7 +212,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             var averageSpeed = _speedPoints.CalculateAverageSpeed(RollingWindow) * 1000;
 
             var distFormatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, _totalDistance, true);
-            var speedFormatted = UnitConversion.FormatString(UnitConversion.SpeedFormatting, averageSpeed, ShowMetres);
+            var speedFormatted = UnitConversion.FormatString(UnitConversion.SpeedFormatting, averageSpeed, false);
             WebOverlay.UpdateData(new StatsDto(distFormatted, speedFormatted, false));
 
             if (SaveGlobalDistance && timeDifference >= 1e3)
