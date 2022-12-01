@@ -42,6 +42,11 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
     public bool SaveGlobalDistance { get; set; }
 
+    [Property("Open Website Automaticly")]
+    [DefaultPropertyValue(false)]
+    [ToolTip("Open the Website when Hand Speed Viewer is initialized.")]
+    public bool OpenWebsiteAutomaticly { get; set; }
+
     [Property("Speed Window Size")]
     [DefaultPropertyValue(1000)]
     [ToolTip("Time window (ms) in which the average speed is calculated. A larger window will make the average smoother.")]
@@ -132,10 +137,13 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             };
 
             Log.Debug("Hand Speed", "Initialized");
-
-            var style = new Style(BackgroundColor, TextColor, Outline, BorderRounding, FontFamily, FontWeight, FontSize, Width,
-                Title, CustomTitleStyle, CustomDivStyle, CustomDistanceStyle, CustomSpeedStyle);
-            WebOverlay.Up(ServerUri, style, ClearInterval);
+            if (OpenWebsiteAutomaticly)
+            {
+                Log.Debug("Hand Speed", "Opening Website");
+                var style = new Style(BackgroundColor, TextColor, Outline, BorderRounding, FontFamily, FontWeight, FontSize, Width,
+                    Title, CustomTitleStyle, CustomDivStyle, CustomDistanceStyle, CustomSpeedStyle);
+                WebOverlay.Up(ServerUri, style, ClearInterval);
+            }
         }
     }
 
