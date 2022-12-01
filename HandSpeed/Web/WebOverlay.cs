@@ -14,7 +14,7 @@ public static class WebOverlay
     private static WebServer? _server;
     private static WebSocketsDataModule? _socket;
 
-    public static void Up(string uri, Style style, int clearInterval)
+    public static void Up(string uri, Style style, int clearInterval, bool openWebsite)
     {
         _style = style;
         if (_server != null)
@@ -36,6 +36,10 @@ public static class WebOverlay
                 .WithWebApi("/", m => m.RegisterController(() => new StaticController(uri, WsRoute, _style, clearInterval)));
             _server.RunAsync();
 
+            if (!openWebsite) {
+                return;
+            }
+                
             var browser = new Process
             {
                 StartInfo = new ProcessStartInfo(Protocol + uri) { UseShellExecute = true }

@@ -75,11 +75,6 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             }
         }
     }
-    
-    [Property("Save Global Distance")]
-    [DefaultPropertyValue(true)]
-    [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
-    public bool SaveGlobalDistance { get; set; }
 
     [Property("Open Website Automatically")]
     [DefaultPropertyValue(true)]
@@ -176,13 +171,10 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             };
 
             Log.Debug("Hand Speed", "Initialized");
-            if (OpenWebsiteAutomatically)
-            {
-                Log.Debug("Hand Speed", "Opening Website");
-                var style = new Style(BackgroundColor, TextColor, Outline, BorderRounding, FontFamily, FontWeight, FontSize, Width,
-                    Title, CustomTitleStyle, CustomDivStyle, CustomDistanceStyle, CustomSpeedStyle);
-                WebOverlay.Up(ServerUri, style, ClearInterval);
-            }
+        
+            var style = new Style(BackgroundColor, TextColor, Outline, BorderRounding, FontFamily, FontWeight, FontSize, Width,
+                Title, CustomTitleStyle, CustomDivStyle, CustomDistanceStyle, CustomSpeedStyle);
+            WebOverlay.Up(ServerUri, style, ClearInterval, OpenWebsiteAutomatically);
         }
     }
 
