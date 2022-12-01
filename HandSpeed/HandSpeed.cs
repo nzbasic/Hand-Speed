@@ -80,6 +80,16 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
     [DefaultPropertyValue(true)]
     [ToolTip("Open the Website when Hand Speed Viewer is initialized.")]
     public bool OpenWebsiteAutomatically { get; set; }
+    
+    [Property("Save Global Distance")]
+    [DefaultPropertyValue(true)]
+    [ToolTip("Save the total distance travelled to a text file (located next to the OTD application)")]
+    public bool SaveGlobalDistance { get; set; }
+    
+    [Property("Save Directory")]
+    [DefaultPropertyValue("")]
+    [ToolTip("Set the directory where you want the global distance stored. Default is next to OTD.")]
+    public string SaveDirectory { get; set; }
 
     [Property("Speed Window Size")]
     [DefaultPropertyValue(1000)]
@@ -211,7 +221,7 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
             {
                 try
                 {
-                    var rawDistanceString = System.IO.File.ReadAllText("global_distance_raw.txt");
+                    var rawDistanceString = System.IO.File.ReadAllText(SaveDirectory + "./global_distance_raw.txt");
                     var success = int.TryParse(rawDistanceString, out var rawDistance);
 
                     if (!success)
@@ -222,16 +232,16 @@ public class CustomFilter : IPositionedPipelineElement<IDeviceReport>
                     {
                         rawDistance += (int)_cumDistance;
                         _cumDistance = 0;
-                        var formatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, rawDistance, false);
-                        System.IO.File.WriteAllText("global_distance_raw.txt", rawDistance.ToString());
-                        System.IO.File.WriteAllText("global_distance_formatted.txt", formatted);
+                        var formatted = UnitConversion.FormatString(UnitConversion.DistanceFormatting, rawDistance, true);
+                        System.IO.File.WriteAllText(SaveDirectory + "./global_distance_raw.txt", rawDistance.ToString());
+                        System.IO.File.WriteAllText(SaveDirectory + "./global_distance_formatted.txt", formatted);
                     }
                 }
                 catch (FileNotFoundException e)
                 {
                     try
                     {
-                        System.IO.File.WriteAllText("global_distance_raw.txt", "0");
+                        System.IO.File.WriteAllText(SaveDirectory + "./global_distance_raw.txt", "0");
                     }
                     catch (Exception inner)
                     {
