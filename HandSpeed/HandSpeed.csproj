@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="EmbedIO" Version="3.4.3"/>
-        <PackageReference Include="OpenTabletDriver.Plugin" Version="0.6.0.2"/>
+        <PackageReference Include="EmbedIO" Version="3.4.3" />
+        <PackageReference Include="OpenTabletDriver.Plugin" Version="0.6.1" />
     </ItemGroup>
 
 </Project>
